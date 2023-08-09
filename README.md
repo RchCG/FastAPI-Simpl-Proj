@@ -36,3 +36,7 @@ Instead of _'first_migration'_ type your migration name, it can be anything.
 4)Upgrade migrations to current.
 
 `>>>alembic upgrade heads`
+
+5)Start app.
+
+`>>>uvicorn main:app --reload`
