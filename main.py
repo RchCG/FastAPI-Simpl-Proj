@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Depends, Query
 from DB.models import User
 from DB.session import get_db, Session
+from routers.handlers import users_router
 
 app = FastAPI(title="UsersFiltrationWithoutSQL")
+app.include_router(users_router)
 
 
-@app.get("/api/v1/users/", summary="Получить отфильтрованных доступных пользователей из БД", tags=["Users"])
+@app.get("/api/v1/users/", summary="Получить отфильтрованных доступных пользователей из БД", tags=["BD Manipulation"])
 async def get_users(
         salary_gt: int = Query(None, description="Заработная плата работника больше чем"),
         salary_lt: int = Query(None, description="Заработная плата работника меньше чем"),
