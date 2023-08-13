@@ -1,8 +1,7 @@
 from environs import Env
-from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 env = Env()  # Создаем экземпляр класса Env
 env.read_env()  # Методом read_env() читаем файл .env и загружаем из него переменные в окружение
@@ -13,18 +12,19 @@ DB_USER = env('DB_USER')
 DB_PASSWORD = env('DB_PASSWORD')
 
 # Настройки для подключения к базе данных (подставьте свои значения)
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
 # Создаём движок и сессию
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(DATABASE_URL, future=True, echo=True)
+
+async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 Base = declarative_base()
 
 
-def get_db():
-    db: Session = SessionLocal()
+async def get_db():
+    """Dependency for getting async session"""
     try:
-        yield db
-        db.commit()
+        AsyncSession = async_session()
+        yield AsyncSession
     finally:
-        db.close()
+        await AsyncSession.close()
