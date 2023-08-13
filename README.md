@@ -8,10 +8,8 @@ This API is intended for users who do not know sql or know it at an absolute min
 ~~~~
 More features are coming soon.
 
-- API transition from synchronous to asynchronous.
 - JWT Authorization.
 - Test coverage.
-- Basic CRUD operations.
 - Redis.
 - Dockerfile.
 ~~~~
